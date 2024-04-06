@@ -1,23 +1,24 @@
-﻿#include "L(5)_CMakeProject1.h"
+#include "L(5)_CMakeProject1.h"
 #include <iostream>
+#include <math.h>
 #include <string>
-template <typename T> class Matrix {
+template <typename T, int N, int M>
+class Matrix {
 public:
-	Matrix() {}
-	Matrix(int rows, int cols) : rows(rows), cols(cols) {
+	Matrix() {
 		content = new T * [rows];
 		for (int i = 0; i < rows; i++) {
 			content[i] = new T[cols];
 		}
 	}
-	Matrix(Matrix<T> const& other) : Matrix(other.Rows(), other.Cols()) {
+	Matrix(Matrix<T, N, M> const& other) {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				content[i][j] = other[i][j];
 			}
 		}
 	}
-	void operator=(Matrix<T> const& other) {
+	void operator=(Matrix const& other) {
 		rows = other.Rows();
 		cols = other.Cols();
 		content = new T * [rows];
@@ -28,7 +29,7 @@ public:
 			}
 		}
 	}
-	friend std::ostream& operator<<(std::ostream& os, Matrix<T> const& m) {
+	friend std::ostream& operator<<(std::ostream& os, Matrix const& m) {
 		std::string output = "";
 		for (int i = 0; i < m.Rows(); i++) {
 			for (int j = 0; j < m.Cols(); j++) {
@@ -38,10 +39,8 @@ public:
 		}
 		return os << output;
 	}
-	friend std::istream& operator>>(std::istream& is, Matrix<T>& m) {
-		int rows, cols;
-		is >> rows >> cols;
-		Matrix<T> tmp = Matrix(rows, cols);
+	friend std::istream& operator>>(std::istream& is, Matrix& m) {
+		Matrix tmp = Matrix<T, N, M>();
 		for (int i = 0; i < tmp.Rows(); i++) {
 			for (int j = 0; j < tmp.Cols(); j++) {
 				is >> tmp[i][j];
@@ -53,7 +52,7 @@ public:
 
 	T* operator[](int ind) const { return content[ind]; }
 
-	Matrix<T>& operator+=(Matrix<T> const& other) {
+	Matrix& operator+=(Matrix const& other) {
 		if (rows != other.rows() || cols != other.cols()) {
 			std::cout << "неправильные размеры матриц";
 			exit(1);
@@ -65,12 +64,12 @@ public:
 		}
 		return *this;
 	}
-	Matrix<T>& operator*=(Matrix<T> const& other) {
+	Matrix& operator*=(Matrix const& other) {
 		if (cols != other.rows()) {
 			std::cout << "неправильные размеры матриц";
 			exit(1);
 		}
-		Matrix<T> res(rows, other.cols());
+		Matrix res(rows, other.cols());
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < other.cols(); j++) {
 				for (int k = 0; k < cols; k++) {
@@ -81,12 +80,12 @@ public:
 		*this = res;
 		return *this;
 	}
-	Matrix<T> operator+(Matrix<T> const& other) {
+	Matrix operator+(Matrix const& other) {
 		if (rows != other.Rows() || cols != other.Cols()) {
 			std::cout << "Неправильные размеры матриц";
 			exit(1);
 		}
-		Matrix<T> res(rows, cols);
+		Matrix<T, N, M> res;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				res[i][j] = (*this)[i][j] + other[i][j];
@@ -94,7 +93,7 @@ public:
 		}
 		return res;
 	}
-	Matrix<T>& operator++() {
+	Matrix& operator++() {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				++content[i][j];
@@ -121,8 +120,8 @@ public:
 			return det;
 		}
 	}
-	Matrix<T> minor(int row, int col) {
-		Matrix<T> m(rows - 1, cols - 1);
+	Matrix minor(int row, int col) {
+		Matrix m(rows - 1, cols - 1);
 		int r = 0, c = 0;
 		for (int i = 0; i < rows; i++) {
 			if (i != row) {
@@ -145,12 +144,12 @@ public:
 
 private:
 	T** content;
-	int rows;
-	int cols;
+	int rows = N;
+	int cols = M;
 };
 
 int main(int argc, char* argv[]) {
-	Matrix<int> a, b, c;
+	Matrix<int, 3, 3> a, b, c;
 	std::cin >> a;
 	b = a;
 	c = a + b;
