@@ -12,7 +12,7 @@ endif()
 project ("L(4)_CMakeProject1")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (CMakeTarget "L(4)_CMakeProject1.cpp" "L(4)_CMakeProject1.h")
+add_executable (CMakeTarget "L(4)_CMakeProject1.2.0.cpp" "L(4)_CMakeProject1.2.0.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET CMakeTarget PROPERTY CXX_STANDARD 20)
